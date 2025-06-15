@@ -14,12 +14,7 @@ function ServiceHome() {
         sapiente tenetur delectus neque, non dicta quos odit numquam nobis
         quasi?
       </p>
-      <div className=" lg:grid grid-cols-3 gap-5">
-      <ServiceCard/>
-      <ServiceCard/>
-      <ServiceCard/>
-      <ServiceCard/>
-      <ServiceCard/>
+      <div className=" lg:grid grid-cols-1 gap-5">
       <ServiceCard/>
       </div>
     </div>
