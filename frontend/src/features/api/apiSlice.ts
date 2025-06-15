@@ -135,6 +135,14 @@ export const apiSlice = createApi({
       getKpis: builder.query<kpis,void>({
         query:()=>`/dashboard/kpis`,
       }),
+      updateCustomerInfo: builder.mutation<void, updateCustomerInfoRequest>({
+  query: (newCustomerInfo) => ({
+    url: `/customer/${newCustomerInfo.customer_id}`,  // note the /:id in your backend route
+    method: "PUT",
+    body: newCustomerInfo,
+  }),
+}),
+
       getOrderTrend: builder.query<orderTrand[],void>({
         query:()=>`/dashboard/order-trends`,
       }),
@@ -142,4 +150,4 @@ export const apiSlice = createApi({
         query:()=>`/dashboard/revenue-breakdown`,}),
 }),});
 
-export const { useGetOrdersQuery,useGetcustomersByKeywordQuery ,useGetVehiclesByCustomerIdQuery,useGetServicesQuery, useCreateOrderMutation,useAddCustomerMutation,useGetCustomersQuery,useAddVehicleMutation,useGetOrdersPerCustomerQuery,useGetcustomerByIdQuery,useUpdateCutomerInfoMutation,useGetEmpoyeesQuery,useEmployeeUpdateInfoMutation,useGetEmployeeByIdQuery,useDeleteEmployeeMutation,useAddEmployeeMutation,useCreateServiceMutation,useUpdateServiceMutation,useDeleteServiceMutation,useGetServiceByIdQuery,useGetKpisQuery,useGetOrderTrendQuery,useGetRevenueQuery ,useUpdateOrderMutation } = apiSlice;  
+export const { useGetOrdersQuery,useGetcustomersByKeywordQuery ,useGetVehiclesByCustomerIdQuery,useGetServicesQuery, useCreateOrderMutation,useAddCustomerMutation,useGetCustomersQuery,useAddVehicleMutation,useGetOrdersPerCustomerQuery,useGetcustomerByIdQuery,useUpdateCutomerInfoMutation,useGetEmpoyeesQuery,useEmployeeUpdateInfoMutation,useGetEmployeeByIdQuery,useDeleteEmployeeMutation,useAddEmployeeMutation,useCreateServiceMutation,useUpdateServiceMutation,useDeleteServiceMutation,useGetServiceByIdQuery,useGetKpisQuery,useGetOrderTrendQuery,useGetRevenueQuery ,useUpdateOrderMutation,useUpdateCustomerInfoMutation } = apiSlice;  

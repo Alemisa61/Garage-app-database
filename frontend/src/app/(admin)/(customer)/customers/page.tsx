@@ -1,45 +1,68 @@
-"use client"
+"use client";
+
 import { useState } from "react";
-import { useGetcustomersByKeywordQuery, useGetCustomersQuery } from "@/features/api/apiSlice";
+import {
+  useGetcustomersByKeywordQuery,
+  useGetCustomersQuery,
+  useUpdateCustomerInfoMutation,
+} from "@/features/api/apiSlice";
 import { HiSearch } from "react-icons/hi";
 import { useRouter } from "next/navigation";
 
-function CustomersPage() {
+export default function CustomersPage() {
   const router = useRouter();
   const [keyword, setKeyword] = useState("");
   const [page, setPage] = useState(1);
+  const [updateCustomerInfo] = useUpdateCustomerInfoMutation();
 
-  const { data: customers, isLoading, isError, error } = useGetCustomersQuery({ page, limit: 10 });
-  const { data: searchCustomers, isLoading: isCustomerLoading, error: customerError } = useGetcustomersByKeywordQuery(
-    { keyword },
-    { skip: !keyword }
+  // Fetch customers for pagination
+  const { data: customers, isLoading, isError, error } = useGetCustomersQuery(
+    { page, limit: 10 }
   );
+
+  // Fetch customers by search keyword; skip if keyword is empty
+  const {
+    data: searchCustomers,
+    isLoading: isSearchLoading,
+    isError: isSearchError,
+  } = useGetcustomersByKeywordQuery({ keyword }, { skip: !keyword });
+
+  // Toggle active status of a customer
+  const toggleStatus = async (customer: any) => {
+    try {
+      await updateCustomerInfo({
+        customer_id: customer.customer_id,
+        customer_first_name: customer.customer_first_name,
+        customer_last_name: customer.customer_last_name,
+        customer_email: customer.customer_email,
+        customer_phone_number: customer.customer_phone_number,
+        active_customer_status: customer.active_customer_status ? 0 : 1,
+      }).unwrap();
+    } catch (err) {
+      console.error("Failed to update customer status:", err);
+    }
+  };
 
   const handleNextPage = () => {
     if ((customers?.customers ?? []).length > 0) {
-      setPage(page + 1);
+      setPage((p) => p + 1);
     }
   };
 
   const handlePreviousPage = () => {
-    if (page > 1) {
-      setPage(page - 1);
-    }
+    if (page > 1) setPage((p) => p - 1);
   };
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setKeyword(e.target.value);
   };
 
-  if (isLoading) return <div>Loading...</div>;
-  if (isError) {
-    console.log("Error fetching customers:", error);
-    return <div>Error</div>;
-  }
+  const displayedCustomers = keyword
+    ? searchCustomers?.customers
+    : customers?.customers;
 
-  const displayedCustomers = keyword ? searchCustomers?.customers : customers?.customers;
-  const isLoadingCustomers = keyword ? isCustomerLoading : isLoading;
-  const isErrorCustomers = keyword ? customerError : isError;
+  const isLoadingCustomers = keyword ? isSearchLoading : isLoading;
+  const isErrorCustomers = keyword ? isSearchError : isError;
 
   return (
     <div className="flex flex-col gap-10 mx-5 my-10 md:mx-16">
@@ -60,7 +83,7 @@ function CustomersPage() {
       </div>
 
       {isLoadingCustomers && <p>Loading...</p>}
-      {isErrorCustomers && <p>Error</p>}
+      {isErrorCustomers && <p>Error loading customers</p>}
 
       {displayedCustomers && displayedCustomers.length > 0 ? (
         <div className="overflow-x-auto">
@@ -77,19 +100,39 @@ function CustomersPage() {
               </tr>
             </thead>
             <tbody>
-              {displayedCustomers.map((customer, index) => (
+              {displayedCustomers.map((customer, idx) => (
                 <tr
                   key={customer.customer_id}
                   onClick={() => router.push(`/customers/${customer.customer_id}`)}
-                  className={`cursor-pointer ${index % 2 ? "bg-gray-100" : ""} hover:bg-gray-200`}
+                  className={`cursor-pointer ${idx % 2 ? "bg-gray-100" : ""} hover:bg-gray-200`}
                 >
-                  <td className="py-4 px-4 border border-gray-300">{customer.customer_id}</td>
-                  <td className="py-4 px-4 border border-gray-300">{customer.customer_first_name}</td>
-                  <td className="py-4 px-4 border border-gray-300">{customer.customer_last_name}</td>
-                  <td className="py-4 px-4 border border-gray-300">{customer.customer_email}</td>
-                  <td className="py-4 px-4 border border-gray-300">{customer.customer_phone_number}</td>
-                  <td className="py-4 px-4 border border-gray-300">{new Date(customer.customer_added_date).toLocaleDateString()}</td>
-                  <td className="py-4 px-4 border border-gray-300">{customer.active_customer_status ? "Active" : "Inactive"}</td>
+                  <td className="py-4 px-4 border border-gray-300">
+                    {customer.customer_id}
+                  </td>
+                  <td className="py-4 px-4 border border-gray-300">
+                    {customer.customer_first_name}
+                  </td>
+                  <td className="py-4 px-4 border border-gray-300">
+                    {customer.customer_last_name}
+                  </td>
+                  <td className="py-4 px-4 border border-gray-300">
+                    {customer.customer_email}
+                  </td>
+                  <td className="py-4 px-4 border border-gray-300">
+                    {customer.customer_phone_number}
+                  </td>
+                  <td className="py-4 px-4 border border-gray-300">
+                    {new Date(customer.customer_added_date).toLocaleDateString()}
+                  </td>
+                  <td
+                    className="py-4 px-4 border border-gray-300 text-center cursor-pointer"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleStatus(customer);
+                    }}
+                  >
+                    {customer.active_customer_status ? "Active" : "Inactive"}
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -103,6 +146,7 @@ function CustomersPage() {
         <button
           className="btn w-36 btn-outline border rounded-l border-gray-300 px-4 py-3 text-customBlue font-semibold"
           onClick={handlePreviousPage}
+          disabled={page === 1}
         >
           Previous Page
         </button>
@@ -116,5 +160,3 @@ function CustomersPage() {
     </div>
   );
 }
-
-export default CustomersPage;
