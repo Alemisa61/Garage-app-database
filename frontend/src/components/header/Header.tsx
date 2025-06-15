@@ -21,7 +21,7 @@ function Header() {
           <p>You visited the best digital garage</p>
         </div>
         <div className="hidden md:pl-32 lg:pl-7 md:flex flex-grow justify-between bg-customBlue text-white p-7">
-          <p>Monday - Saturday 7:00AM-6:00PM</p>
+          <p>Monday - Saturday 2:00AM-11:00PM local Ethiopian time</p>
           <p className="hidden lg:block">Call US: +2596177459</p>
         </div>
       </div>
@@ -78,7 +78,7 @@ function Header() {
                 <li>
                   <Link
                     href="/dashboard"
-                    className="bg-green-600 text-white py-3 px-4 block text-center sm:inline-block rounded hover:bg-green-500"
+                    className="bg-orange-800 text-white py-3 px-4 block text-center sm:inline-block rounded hover:bg-green-500"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     Dashboard
@@ -86,7 +86,7 @@ function Header() {
                 </li>
                 <li className="pl-0 sm:pl-7 sm:border-l-2">
                   <button
-                    className="bg-customBlue text-white py-3 px-4 block text-center sm:inline-block"
+                    className="bg-customBlue text-white py-3 px-4 block text-center sm:inline-block  hover:bg-orange-400 rounded"
                     onClick={() => {
                       setIsMenuOpen(false);
                       signOut({ callbackUrl: "/signin" });
@@ -100,7 +100,7 @@ function Header() {
               <li className="pl-0 sm:pl-7 sm:border-l-2">
                 <Link
                   href="/signin"
-                  className="bg-customBlue text-white py-3 px-4 block text-center sm:inline-block"
+                  className="bg-customBlue text-white py-3 px-4 block text-center sm:inline-block hover:bg-yellow-400 rounded"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Sign In
