@@ -55,12 +55,14 @@ export const apiSlice = createApi({
         body:newService
       })
     }),
-    deleteService:builder.mutation<void,{service_id:number}>({
-      query:({service_id})=>({
-        url:`/service/${service_id}`,
-        method:"DELETE"
-      })
-    }),
+ 
+    deleteService: builder.mutation<void, { service_id: number }>({
+  query: ({ service_id }) => ({
+    url: `/service/${service_id}`,
+    method: "DELETE",
+  })
+})
+,
     
     createOrder: builder.mutation<void,CreateOrderRequest>({
       query:(newOrder)=>({
@@ -112,6 +114,14 @@ export const apiSlice = createApi({
       getEmployeeById: builder.query<getEmployeeByIdResponse,{employee_id:number}>({
         query:({employee_id})=>`/employee/${employee_id}`
       }),
+      updateOrder: builder.mutation<void, { order_id: number; order_status: number }>({
+  query: ({ order_id, order_status }) => ({
+    url: '/order',
+    method: 'PUT',
+    body: { order_id, order_status },
+  }),
+}),
+
       deleteEmployee: builder.mutation<void,{employee_id:number}>({
         query:({employee_id})=>({
           url:`/employee/${employee_id}`,
@@ -132,4 +142,4 @@ export const apiSlice = createApi({
         query:()=>`/dashboard/revenue-breakdown`,}),
 }),});
 
-export const { useGetOrdersQuery,useGetcustomersByKeywordQuery ,useGetVehiclesByCustomerIdQuery,useGetServicesQuery, useCreateOrderMutation,useAddCustomerMutation,useGetCustomersQuery,useAddVehicleMutation,useGetOrdersPerCustomerQuery,useGetcustomerByIdQuery,useUpdateCutomerInfoMutation,useGetEmpoyeesQuery,useEmployeeUpdateInfoMutation,useGetEmployeeByIdQuery,useDeleteEmployeeMutation,useAddEmployeeMutation,useCreateServiceMutation,useUpdateServiceMutation,useDeleteServiceMutation,useGetServiceByIdQuery,useGetKpisQuery,useGetOrderTrendQuery,useGetRevenueQuery } = apiSlice;  
+export const { useGetOrdersQuery,useGetcustomersByKeywordQuery ,useGetVehiclesByCustomerIdQuery,useGetServicesQuery, useCreateOrderMutation,useAddCustomerMutation,useGetCustomersQuery,useAddVehicleMutation,useGetOrdersPerCustomerQuery,useGetcustomerByIdQuery,useUpdateCutomerInfoMutation,useGetEmpoyeesQuery,useEmployeeUpdateInfoMutation,useGetEmployeeByIdQuery,useDeleteEmployeeMutation,useAddEmployeeMutation,useCreateServiceMutation,useUpdateServiceMutation,useDeleteServiceMutation,useGetServiceByIdQuery,useGetKpisQuery,useGetOrderTrendQuery,useGetRevenueQuery ,useUpdateOrderMutation } = apiSlice;  

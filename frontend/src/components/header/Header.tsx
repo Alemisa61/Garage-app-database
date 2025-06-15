@@ -18,11 +18,11 @@ function Header() {
     <div className="sticky top-0 z-50 bg-white shadow-md">
       <div className="md:flex justify-between items-center">
         <div className="text-center bg-customeRed text-white p-7">
-          <p>Enjoy the Beso while we fix your car</p>
+          <p>You visited the best digital garage</p>
         </div>
         <div className="hidden md:pl-32 lg:pl-7 md:flex flex-grow justify-between bg-customBlue text-white p-7">
           <p>Monday - Saturday 7:00AM-6:00PM</p>
-          <p className="hidden lg:block">Call Abe: +2596177459</p>
+          <p className="hidden lg:block">Call US: +2596177459</p>
         </div>
       </div>
 
@@ -31,8 +31,8 @@ function Header() {
         {/* Logo */}
         <Image
           src="/images/logo.png"
-          width={271}
-          height={50}
+          width={305}
+          height={88}
           alt="logo"
           className="hidden lg:block"
         />

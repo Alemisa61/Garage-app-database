@@ -1,10 +1,10 @@
 "use client";
-import { useState } from "react";
+
+import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import { useGetOrdersQuery } from "@/features/api/apiSlice";
+import { useGetOrdersQuery, useUpdateOrderMutation } from "@/features/api/apiSlice";
 import { RootState } from "@/store/store";
 
-// Map numeric order status to label and color
 const statusConfig: Record<number, { label: string; color: string }> = {
   0: { label: "In Progress", color: "bg-yellow-500" },
   1: { label: "Completed", color: "bg-green-600" },
@@ -20,23 +20,56 @@ const OrdersPage = () => {
     limit: 10,
   });
 
+  const [updateOrder] = useUpdateOrderMutation();
+
+  // Local state for optimistic UI update
+  const [localOrders, setLocalOrders] = useState(orders?.data ?? []);
+
+  // Sync local orders on fetch
+  useEffect(() => {
+    if (orders?.data) {
+      setLocalOrders(orders.data);
+    }
+  }, [orders]);
+
   const handleNextPage = () => {
     if ((orders?.data ?? []).length > 0) {
-      setPage(page + 1);
+      setPage((p) => p + 1);
     }
   };
 
   const handlePreviousPage = () => {
     if (page > 1) {
-      setPage(page - 1);
+      setPage((p) => p - 1);
+    }
+  };
+
+  const handleStatusClick = async (order_id: number, currentStatus: number) => {
+    if (currentStatus === 1) return; // Already completed
+
+    setLocalOrders((prev) =>
+      prev.map((order) =>
+        order.order_id === order_id ? { ...order, order_status: 1 } : order
+      )
+    );
+
+    try {
+      await updateOrder({ order_id, order_status: 1 }).unwrap();
+    } catch (err) {
+      console.error("Update order failed", err);
+      setLocalOrders((prev) =>
+        prev.map((order) =>
+          order.order_id === order_id ? { ...order, order_status: currentStatus } : order
+        )
+      );
     }
   };
 
   if (isLoading) return <div className="text-center text-xl mt-10">Loading...</div>;
-  if (isError) {
-    console.log("Error fetching orders:", error);
-    return <div className="text-center text-red-500 mt-10">Error loading orders.</div>;
-  }
+  if (isError)
+    return (
+      <div className="text-center text-red-500 mt-10">Error loading orders.</div>
+    );
 
   return (
     <div className="flex flex-col min-h-screen px-4 md:px-10 py-8">
@@ -56,22 +89,47 @@ const OrdersPage = () => {
             </tr>
           </thead>
           <tbody>
-            {(orders?.data ?? []).length > 0 ? (
-              orders.data.map((order) => (
-                <tr key={order.order_id} className="odd:bg-white even:bg-gray-100">
-                  <td className="py-3 px-2 border border-gray-300 text-center">{order.order_id}</td>
-                  <td className="py-3 px-2 border border-gray-300 text-center">{order.customer_name}</td>
-                  <td className="py-3 px-2 border border-gray-300 text-center">{order.vehicle_model}</td>
-                  <td className="py-3 px-2 border border-gray-300 text-center">${order.order_total_price}</td>
+            {localOrders.length > 0 ? (
+              localOrders.map((order) => (
+                <tr
+                  key={order.order_id}
+                  className="odd:bg-white even:bg-gray-100"
+                >
+                  <td className="py-3 px-2 border border-gray-300 text-center">
+                    {order.order_id}
+                  </td>
+                  <td className="py-3 px-2 border border-gray-300 text-center">
+                    {order.customer_name}
+                  </td>
+                  <td className="py-3 px-2 border border-gray-300 text-center">
+                    {order.vehicle_model}
+                  </td>
+                  <td className="py-3 px-2 border border-gray-300 text-center">
+                    ${order.order_total_price}
+                  </td>
                   <td className="py-3 px-2 border border-gray-300 text-center">
                     {new Date(order.order_date).toLocaleDateString()}
                   </td>
-                  <td className="py-3 px-2 border border-gray-300 text-center">{order.employee_name}</td>
+                  <td className="py-3 px-2 border border-gray-300 text-center">
+                    {order.employee_name}
+                  </td>
                   <td className="py-3 px-2 border border-gray-300 text-center w-32 whitespace-nowrap overflow-hidden text-ellipsis">
                     <span
-                      className={`px-3 py-1 rounded text-white text-xs font-semibold ${
+                      onClick={() =>
+                        handleStatusClick(order.order_id, order.order_status)
+                      }
+                      className={`px-3 py-1 rounded text-white text-xs font-semibold cursor-pointer ${
                         statusConfig[order.order_status]?.color || "bg-gray-400"
+                      } ${
+                        order.order_status === 1
+                          ? "cursor-default"
+                          : "hover:brightness-90"
                       }`}
+                      title={
+                        order.order_status === 1
+                          ? "Completed"
+                          : "Click to complete"
+                      }
                     >
                       {statusConfig[order.order_status]?.label || "Unknown"}
                     </span>
@@ -80,7 +138,10 @@ const OrdersPage = () => {
               ))
             ) : (
               <tr>
-                <td colSpan={7} className="py-4 px-2 border border-gray-300 text-center text-customBlue font-semibold">
+                <td
+                  colSpan={7}
+                  className="py-4 px-2 border border-gray-300 text-center text-customBlue font-semibold"
+                >
                   No orders found.
                 </td>
               </tr>

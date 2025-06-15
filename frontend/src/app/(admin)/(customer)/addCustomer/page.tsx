@@ -7,16 +7,21 @@ import { useAddCustomerMutation } from "@/features/api/apiSlice";
 
 function Page() {
   const [error, setError] = useState(false);
+  const [success, setSuccess] = useState(false);  // <-- added success state
 
   const [addCustomer, { isError }] = useAddCustomerMutation();
 
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<CustomerFormField>();
 
   const onSubmit: SubmitHandler<CustomerFormField> = async (data) => {
+    setError(false);
+    setSuccess(false);
     try {
-      await addCustomer(data);
+      await addCustomer(data).unwrap();
       if (isError) {
         setError(true);
+      } else {
+        setSuccess(true);   // <-- set success true on successful add
       }
     } catch (error) {
       console.error("Error during adding customer:", error);
@@ -95,6 +100,7 @@ function Page() {
         </button>
 
         {error && <p className="text-red-500 mt-4">Something went wrong, please try again.</p>}
+        {success && <p className="text-green-500 mt-4">Customer added successfully!</p>}  {/* <-- success message */}
       </form>
     </div>
   );

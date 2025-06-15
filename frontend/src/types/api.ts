@@ -232,3 +232,27 @@ export interface employee {
 month: string;
 orders:number
  }
+ // Base service interface matching DB fields (without id)
+export interface Service {
+  service_name: string;
+  service_description?: string; // optional since DB allows NULL
+}
+
+// Full service with service_id (from DB)
+export interface ServiceUpdate {
+  service_id: number;
+  service_name: string;
+  service_description?: string;
+}
+
+// Response when getting multiple services
+export interface ServiceResponse {
+  status: string;
+  services: ServiceUpdate[];
+}
+
+// Example for inserting new service (usually service_id is auto-generated)
+export interface CreateServiceRequest {
+  service_name: string;
+  service_description?: string;
+}

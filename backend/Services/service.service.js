@@ -110,31 +110,36 @@ async function updateService(serviceData){
         throw new Error("Failed to update service")
     }
 }
+async function deleteService(id) {
+  if (isNaN(id)) {
+    throw new Error("Invalid id");
+  }
 
-async function deleteService(id){
+  try {
+    // Check if service is used in order_services
+    const [usage] = await query(
+      "SELECT COUNT(*) AS count FROM order_services WHERE service_id = ?",
+      [id]
+    );
 
-    if(isNaN(id)){
-        throw new Error("Invalid id")
+    if (usage.count > 0) {
+      throw new Error("Cannot delete: Service is used in existing orders.");
     }
 
-    try {
-        const sql="DELETE FROM common_services WHERE service_id=?";
+    const sql = "DELETE FROM common_services WHERE service_id=?";
+    const result = await query(sql, [id]);
 
-        const result=await query(sql,[id]);
-
-        if(result.affectedRows>0){
-            return {status:"true"}
-        }else{
-            throw new Error("Failed to delete service")
-
-        }
-    } catch (error) {
-        
-        console.log("error deleting service",error);
-        throw new Error("Failed to delete service")
-
+    if (result.affectedRows > 0) {
+      return { status: "true" };
+    } else {
+      throw new Error("Failed to delete service");
     }
+  } catch (error) {
+    console.error("error deleting service", error);
+    throw new Error(error.message || "Failed to delete service");
+  }
 }
+
 
 
 module.exports={ createService,checkIfServiceExist,getAllServices,getServiceById,updateService,deleteService}

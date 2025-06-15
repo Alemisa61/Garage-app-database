@@ -88,7 +88,7 @@ function Page() {
     <div className="md:mx-20 mx-4">
       <p className="text-4xl font-bold text-customBlue my-10">
         Create a new order
-        <span className="inline-block ml-3 w-10 h-[2px] bg-customRed"></span>
+        <span className="inline-block ml-3 w-10 h-[2px] bg-customeRed"></span>
       </p>
 
       {/* Step 1: Search customer */}
@@ -173,7 +173,7 @@ function Page() {
 
           <p className="text-4xl font-bold text-customBlue my-10">
             Choose a vehicle
-            <span className="inline-block ml-3 w-10 h-[2px] bg-customRed"></span>
+            <span className="inline-block ml-3 w-10 h-[2px] bg-customeRed"></span>
           </p>
           <div className="overflow-x-auto">
             <table className="min-w-full bg-white border border-gray-200 mt-3">
@@ -253,7 +253,7 @@ function Page() {
           <div className="shadow-md rounded-sm border border-gray-200 my-5 px-4 py-5">
             <p className="text-4xl font-bold text-customBlue my-10">
               Additional request
-              <span className="inline-block ml-3 w-10 h-[2px] bg-customRed"></span>
+              <span className="inline-block ml-3 w-10 h-[2px] bg-customeRed"></span>
             </p>
             <textarea
               value={additionalRequest}
@@ -273,7 +273,7 @@ function Page() {
             />
             {errorMessage && <p className="text-red-500 mt-2">{errorMessage}</p>}
             <button
-              className=" px-10 py-4 mt-5 text-white bg-customRed rounded-md"
+              className=" px-10 py-4 mt-5 text-white bg-customeRed rounded-md"
               onClick={handlesSubmit}
               disabled={isLoading}
             >
