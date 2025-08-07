@@ -50,7 +50,7 @@ The Garage Management System is a comprehensive application designed to streamli
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/naolaboma/Garage-Management-System.git
+   git clone https://github.com/Alemisa61/Garage-app-database.git
    ```
 2. Navigate to the project directory:
    ```bash
@@ -113,7 +113,3 @@ The Garage Management System is a comprehensive application designed to streamli
 ## License
 
 This project is licensed under the MIT License. See the LICENSE file for details.
-
-## Contact
-
-For any inquiries or support, please contact [naolaboma](https://github.com/naolaboma).
